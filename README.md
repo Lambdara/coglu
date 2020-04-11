@@ -1,9 +1,15 @@
-# opengl-shader-loader
-Small library for loading shaders for OpenGL in C
+# coglu - C OpenGL Utilities
+Small library with utilities for OpenGL
+
+## Scope
+- Loading shaders from files and compiling them into shader programs
+- Loading textures from files
+- Loading meshes from files
+- Other contributions welcome that fit the philosophy
 
 ## Philosophy
-- Should cover all the basic and standard usecases of using shaders in OpenGL, so you don't have to re-create the standard file-reading and shader compilation code for every project, but can just use this library.
-- Should be easy to install and use. If possible, keep it header-only.
+- Should be easy to install and use. If possible it should be kept header-only.
+- The libary should cover simple, common and general use-cases that turn up when trying to use OpenGL in C.
 
 ## Contributing
 Feel free to use the issue tracker to propose contributions and to create pull-requests to close existing issues.
