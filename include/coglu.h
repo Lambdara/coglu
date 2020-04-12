@@ -1,4 +1,4 @@
-unsigned int compile_shader(char *shader_path, int shader_type) {
+unsigned int compile_shader(const char *shader_path, int shader_type) {
     int length;
 
     // Read shader from file
@@ -22,16 +22,16 @@ unsigned int compile_shader(char *shader_path, int shader_type) {
     glShaderSource(shader, 1, &shader_content, &length);
     glCompileShader(shader);
 
-    int  success;
+    int success;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
-        int length;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+        int log_length;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &log_length);
 
-        char* info_log = malloc(sizeof(char) * length);
-        glGetShaderInfoLog(shader, length, NULL, info_log);
+        char* info_log = malloc(sizeof(char) * log_length);
+        glGetShaderInfoLog(shader, log_length, NULL, info_log);
 
-        fprintf(stderr, "Shader compilation error: %s\n", info_log);
+        fprintf(stderr, "Shader compilation error in file %s: %s\n", shader_path, info_log);
         free(info_log);
     }
 
