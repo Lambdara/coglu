@@ -15,20 +15,28 @@ unsigned int compile_shader(char *shader_path, int shader_type) {
         fprintf(stderr, "Could not open vertex shader file\n");
         exit(1);
     }
-    const char *shader_content = shader_source;
 
     // Compile shader
-    unsigned int shader;
-    shader = glCreateShader(shader_type);
+    const char *shader_content = shader_source;
+    unsigned int shader = glCreateShader(shader_type);
     glShaderSource(shader, 1, &shader_content, &length);
     glCompileShader(shader);
+
     int  success;
-    char info_log[512];
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(shader, 512, NULL, info_log);
-        fprintf(stderr,"Shader compilation error in file %s: %s\n", shader_path, info_log);
+        int length;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+
+        char* info_log = malloc(sizeof(char) * length);
+        glGetShaderInfoLog(shader, length, NULL, info_log);
+
+        fprintf(stderr, "Shader compilation error: %s\n", info_log);
+        free(info_log);
     }
+
+    free(shader_source);
+
     return shader;
 }
 
@@ -46,4 +54,9 @@ void add_shader_program(char *vertex_shader_path,
     glAttachShader(*shader_program_ptr, vertex_shader);
     glAttachShader(*shader_program_ptr, fragment_shader);
     glLinkProgram(*shader_program_ptr);
+    glValidateProgram();
+
+    // Clean up shaders, they're useless now
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
 }
