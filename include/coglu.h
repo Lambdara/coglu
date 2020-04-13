@@ -1,3 +1,6 @@
+#ifndef COGLU_H
+#define COGLU_H
+
 unsigned int compile_shader(char *shader_path, int shader_type) {
     int length;
 
@@ -47,3 +50,5 @@ void add_shader_program(char *vertex_shader_path,
     glAttachShader(*shader_program_ptr, fragment_shader);
     glLinkProgram(*shader_program_ptr);
 }
+
+#endif
