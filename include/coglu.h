@@ -1,6 +1,13 @@
 #ifndef COGLU_H
 #define COGLU_H
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#ifdef COGLU_USE_GLEW
+#include <GL/glew.h>
+#endif
+
 unsigned int coglu_shader_compile(const char *shader_path, int shader_type) {
     int length;
 
@@ -11,7 +18,7 @@ unsigned int coglu_shader_compile(const char *shader_path, int shader_type) {
         fseek(shader_file, 0, SEEK_END);
         length = (int) ftell(shader_file);
         fseek (shader_file, 0, SEEK_SET);
-        shader_source = malloc (length);
+        shader_source = malloc(length);
         fread(shader_source, 1, length, shader_file);
         fclose(shader_file);
     } else {
@@ -31,7 +38,7 @@ unsigned int coglu_shader_compile(const char *shader_path, int shader_type) {
         int info_log_length;
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &info_log_length);
 
-        char* info_log = malloc(sizeof(char) * info_log_length);
+        char *info_log = malloc(sizeof(char) * info_log_length);
         glGetShaderInfoLog(shader, info_log_length, NULL, info_log);
 
         fprintf(stderr, "Shader compilation error in file %s: %s\n", shader_path, info_log);
@@ -43,9 +50,8 @@ unsigned int coglu_shader_compile(const char *shader_path, int shader_type) {
     return shader;
 }
 
-void coglu_shader_add_program(char *vertex_shader_path,
-                              char *fragment_shader_path,
-                              unsigned int *shader_program_ptr) {
+int coglu_shader_load_program(const char *vertex_shader_path,
+                              const char *fragment_shader_path) {
     // Compile shaders
     unsigned int vertex_shader = coglu_shader_compile(vertex_shader_path,
                                                       GL_VERTEX_SHADER);
@@ -53,15 +59,24 @@ void coglu_shader_add_program(char *vertex_shader_path,
                                                         GL_FRAGMENT_SHADER);
 
     // Link shader program
-    *shader_program_ptr = glCreateProgram();
-    glAttachShader(*shader_program_ptr, vertex_shader);
-    glAttachShader(*shader_program_ptr, fragment_shader);
-    glLinkProgram(*shader_program_ptr);
-    glValidateProgram(*shader_program_ptr);
+    unsigned int program = glCreateProgram();
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
+    glLinkProgram(program);
+    glValidateProgram(program);
 
-    // Clean up shaders, they're useless now
+    // Link shader program
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
+
+    return program;
+}
+
+void coglu_shader_add_program(const char *vertex_shader_path,
+                              const char *fragment_shader_path,
+                              unsigned int *shader_program_ptr) {
+    // Load shader program and assign result to provided shader program pointer.
+    *shader_program_ptr = coglu_shader_load_program(vertex_shader_path, fragment_shader_path);
 }
 
 #endif
