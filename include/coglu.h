@@ -50,7 +50,7 @@ unsigned int coglu_shader_compile(const char *shader_path, int shader_type) {
     return shader;
 }
 
-int coglu_shader_load_program(const char *vertex_shader_path,
+unsigned int coglu_shader_load_program(const char *vertex_shader_path,
                               const char *fragment_shader_path) {
     // Compile shaders
     unsigned int vertex_shader = coglu_shader_compile(vertex_shader_path,
