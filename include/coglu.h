@@ -28,11 +28,11 @@ unsigned int coglu_shader_compile(const char *shader_path, int shader_type) {
     int success;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
-        int log_length;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &log_length);
+        int info_log_length;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &info_log_length);
 
-        char* info_log = malloc(sizeof(char) * log_length);
-        glGetShaderInfoLog(shader, log_length, NULL, info_log);
+        char* info_log = malloc(sizeof(char) * info_log_length);
+        glGetShaderInfoLog(shader, info_log_length, NULL, info_log);
 
         fprintf(stderr, "Shader compilation error in file %s: %s\n", shader_path, info_log);
         free(info_log);
